@@ -5,7 +5,7 @@
 import sys
 from sys import stdin, stdout
 
-import cpgame
+from cpgame import start
 from supervisor import runtime
 
 from .serial import ALL_COMMANDS, DESCRIPTIONS, VERSION
@@ -61,7 +61,7 @@ class OIP:
 
     def start(self):
         every(0.05, self.read)
-        return cpgame.start()
+        return start()
 
     def dispatch(self, now, command):
         # type: (float, str) -> None
@@ -71,6 +71,15 @@ class OIP:
 
         self.rx_time = now
         key, _, value = command.partition("=")
+        channel, fmt = self.inputs[key]
+        fn = self.input_map[key]
+
+        if fmt == NIB:
+            fn(now, bool(value))
+        elif fmt == NIN:
+            fn(now, int(value))
+        elif fmt == NIF:
+            fn(now, float(value))
 
     def read(self, now):
         # type: (float) -> None

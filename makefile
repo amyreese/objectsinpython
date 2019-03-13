@@ -1,8 +1,12 @@
-src := setup.py oip/
+src := setup.py oip/ examples/
 
-oip.mpy: $(src)
-	cat oip/__init__.py oip/serial.py oip/main.py | grep -v "from \." > oip.py
+oip.mpy: oip.py
 	python3 -m mpy_cross oip.py
+
+oip.py: $(src)
+	cat oip/__init__.py cpgame/cpgame.py oip/serial.py oip/main.py \
+		| grep -v "from \." | grep -v "from cpgame import" \
+		> oip.py
 
 setup:
 	python3 -m pip install -Ur requirements-dev.txt

@@ -6,4 +6,4 @@ python:
 install:
 - make setup
 script:
-- make lint
+- make lint oip.mpy
