@@ -1,0 +1,6 @@
+black
+cpgame
+isort
+mpy-cross
+mypy
+twine
