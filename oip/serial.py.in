@@ -14,3 +14,5 @@ class Numeric:
 {numeric}
 
 DESCRIPTIONS = {descriptions}
+
+ALL_COMMANDS = {all_commands}

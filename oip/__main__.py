@@ -89,12 +89,14 @@ def write_metadata(metadata: Commands, version: str) -> None:
     numerics = "\n".join(tpl.format(key) for key in metadata["numeric"])
     booleans = "\n".join(tpl.format(key) for key in metadata["boolean"])
     commands = "\n".join(tpl.format(key) for key in metadata["command"])
+    all_commands = pformat(list(metadata["command"]))
     kwargs = {
         "version": version,
         "descriptions": descriptions,
         "numeric": numerics,
         "boolean": booleans,
         "command": commands,
+        "all_commands": all_commands,
     }
 
     with open(path_in.as_posix()) as fh:
