@@ -1,7 +1,7 @@
 src := setup.py oip/
 
 oip.mpy: $(src)
-	cat oip/__init__.py oip/serial.py oip/main.py > oip.py
+	cat oip/__init__.py oip/serial.py oip/main.py | grep -v "from \." > oip.py
 	python3 -m mpy_cross oip.py
 
 setup:
