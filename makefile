@@ -1,5 +1,9 @@
 src := setup.py oip/
 
+oip.mpy: $(src)
+	cat oip/__init__.py oip/serial.py oip/main.py > oip.py
+	python3 -m mpy_cross oip.py
+
 setup:
 	python3 -m pip install -Ur requirements-dev.txt
 
@@ -21,11 +25,11 @@ release: lint clean
 	python3 setup.py sdist
 	python3 -m twine upload dist/*
 
-cpgame.mpy:
-	python3 -m mpy_cross oip.py
+serial:
+	python3 -m oip ~/Documents/ObjectsInSpace/serial_commands.txt
 
 clean:
-	rm -rf build dist README MANIFEST oip.egg-info oip.mpy
+	rm -rf build dist README MANIFEST oip.egg-info oip.py oip.mpy
 
 distclean: clean
 	rm -rf venv .venv
