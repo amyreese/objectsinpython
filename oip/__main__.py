@@ -12,11 +12,18 @@ Usage:
 
 import re
 import sys
-from pprint import pformat
 from pathlib import Path
+from pprint import pformat
 from typing import Any, Dict
 
 import black
+
+try:
+    from typing import Dict, Union, Tuple
+
+    Commands = Dict[str, Dict[str, str]]
+except ImportError:
+    pass
 
 VERSION_RE = re.compile(r"SERIAL OUTPUT COMMAND LIST - (\S+)")
 HEADER_RE = re.compile(r"(.+):$")
@@ -24,11 +31,16 @@ COMMAND_RE = re.compile(r"(COMMAND|FUNCTION): (\S+)")
 DESCRIPTION_RE = re.compile(r"DESCRIPTION: (.+)")
 
 
-def generate_metadata(path: Path) -> None:
-    metadata = {"version": "", "numeric": {}, "boolean": {}, "command": {}}
+def generate_metadata(path: Path) -> Tuple[Commands, str]:
+    metadata = {
+        "numeric": {},
+        "boolean": {},
+        "command": {},
+    }  # type: Dict[str, Dict[str, str]]
+    version = ""
     section = ""
     key = ""
-    with open(path) as fh:
+    with open(path.as_posix()) as fh:
         for line in fh:
             line = line.strip()
             if not line:
@@ -36,7 +48,7 @@ def generate_metadata(path: Path) -> None:
 
             match = VERSION_RE.match(line)
             if match:
-                metadata["version"] = match.group(1)
+                version = match.group(1)
                 continue
 
             match = HEADER_RE.match(line)
@@ -63,10 +75,10 @@ def generate_metadata(path: Path) -> None:
 
             print("Line did not match any patterns: {0}".format(line))
 
-    return metadata
+    return metadata, version
 
 
-def write_metadata(metadata: Dict[str, Any]) -> None:
+def write_metadata(metadata: Commands, version: str) -> None:
     path_in = Path(__file__).parent / "serial.py.in"
     path_out = Path(__file__).parent / "serial.py"
 
@@ -78,19 +90,19 @@ def write_metadata(metadata: Dict[str, Any]) -> None:
     booleans = "\n".join(tpl.format(key) for key in metadata["boolean"])
     commands = "\n".join(tpl.format(key) for key in metadata["command"])
     kwargs = {
-        "version": metadata["version"],
+        "version": version,
         "descriptions": descriptions,
         "numeric": numerics,
         "boolean": booleans,
         "command": commands,
     }
 
-    with open(path_in) as fh:
+    with open(path_in.as_posix()) as fh:
         output = fh.read().format(**kwargs)
 
-    # output = black.format_str(output, 88)
+    output = black.format_str(output, 88)
 
-    with open(path_out, "w") as fh:
+    with open(path_out.as_posix(), "w") as fh:
         fh.write(output)
 
 
@@ -103,5 +115,5 @@ if not command_text.exists():
     print("Serial command list {0} not found".format(command_text))
     exit(1)
 
-metadata = generate_metadata(command_text)
-write_metadata(metadata)
+metadata, version = generate_metadata(command_text)
+write_metadata(metadata, version)
