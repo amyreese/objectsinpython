@@ -29,10 +29,26 @@ def iff_active(now, value):
     pixels[0] = GREEN if value else RED
 
 
+@oip.press(board.BUTTON_B)
+def button_a(now, value):
+    if value:
+        oip.execute("UNDOCK")
+
+
 @oip.press(board.BUTTON_A)
 def button_a(now, value):
     pixels[9] = GREEN if value else RED
     oip.execute("BURN_MAIN_ENGINE" if value else "STOP_MAIN_ENGINE")
+
+
+@oip.press(board.A5, touch=True)
+def turn_left(now, value):
+    oip.execute("FIRE_RCS_CCW" if value else "STOP_RCS")
+
+
+@oip.press(board.A6, touch=True)
+def turn_right(now, value):
+    oip.execute("FIRE_RCS_CW" if value else "STOP_RCS")
 
 
 oip.start()
