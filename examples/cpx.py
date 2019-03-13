@@ -29,4 +29,10 @@ def iff_active(now, value):
     pixels[0] = GREEN if value else RED
 
 
+@oip.press(board.BUTTON_A)
+def button_a(now, value):
+    pixels[9] = GREEN if value else RED
+    oip.execute("BURN_MAIN_ENGINE" if value else "STOP_MAIN_ENGINE")
+
+
 oip.start()
