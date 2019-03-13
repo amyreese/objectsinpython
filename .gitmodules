@@ -1,0 +1,3 @@
+[submodule "cpgame"]
+	path = cpgame
+	url = https://github.com/jreese/cpgame.git
