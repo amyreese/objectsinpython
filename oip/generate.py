@@ -78,8 +78,8 @@ def generate_metadata(path: Path) -> Tuple[Commands, str]:
     return metadata, version
 
 
-def write_metadata(metadata: Commands, version: str) -> None:
-    path_in = Path(__file__).parent / "serial.py.in"
+def write_metadata(metadata: Commands, version: str, tiny: bool = False) -> None:
+    path_in = Path(__file__).parent / ("serial.py.in.tiny" if tiny else "serial.py.in")
     path_out = Path(__file__).parent / "serial.py"
 
     tpl = '    {0} = "{0}"'
@@ -108,14 +108,19 @@ def write_metadata(metadata: Commands, version: str) -> None:
         fh.write(output)
 
 
-if len(sys.argv) != 2:
-    print("Usage: {0} <serial_commands.txt>".format(sys.argv[0]))
+if 2 > len(sys.argv) > 3:
+    print("Usage: {0} [--tiny] <serial_commands.txt>".format(sys.argv[0]))
     exit(1)
 
-command_text = Path(sys.argv[1])
+
+tiny = False
+if sys.argv[-2] == "--tiny":
+    tiny = True
+
+command_text = Path(sys.argv[-1])
 if not command_text.exists():
     print("Serial command list {0} not found".format(command_text))
     exit(1)
 
 metadata, version = generate_metadata(command_text)
-write_metadata(metadata, version)
+write_metadata(metadata, version, tiny=tiny)
