@@ -1,0 +1,16 @@
+"""
+Objects In Space serial command interface.
+"""
+
+VERSION = "{version}"
+
+class Command:
+{command}
+
+class Boolean:
+{boolean}
+
+class Numeric:
+{numeric}
+
+DESCRIPTIONS = {descriptions}
