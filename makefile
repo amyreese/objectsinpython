@@ -1,12 +1,5 @@
 src := setup.py oip/ examples/
 
-oip.mpy: oip.py
-	python3 -m mpy_cross oip.py
-
-oip.py: $(src)
-	cat oip/__init__.py oip/serial.py oip/main.py \
-		| grep -v "from \." > oip.py
-
 setup:
 	python3 -m pip install -Ur requirements-dev.txt
 
@@ -28,14 +21,20 @@ release: lint clean
 	python3 setup.py sdist
 	python3 -m twine upload dist/*
 
-full:
+full: $(src)
 	python3 oip/generate.py ~/Documents/ObjectsInSpace/serial_commands.txt
+	cat oip/__init__.py oip/serial.py oip/main.py \
+		| grep -v "from \." > oip.py
+	python3 -m mpy_cross oip.py
 
-tiny:
-	python3 oip/generate.py --tiny ~/Documents/ObjectsInSpace/serial_commands.txt
+tiny: $(src)
+	python3 oip/generate.py ~/Documents/ObjectsInSpace/serial_commands.txt
+	cat oip/__init__.py oip/serial.py oip/main.py \
+		| grep -v "from \." > oip-tiny.py
+	python3 -m mpy_cross oip-tiny.py
 
 clean:
-	rm -rf build dist README MANIFEST oip.egg-info oip.py oip.mpy
+	rm -rf build dist README MANIFEST oip.egg-info oip*.py oip*.mpy
 
 distclean: clean
 	rm -rf venv .venv
