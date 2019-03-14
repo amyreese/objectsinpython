@@ -22,11 +22,8 @@ NIB = "NIB"
 NIN = "NIN"
 NIF = "NIF"
 DEBOUNCE = 0.02  # how long to wait on up/down changes
-
-
-def sort_by_channel(item):
-    value, channel = item
-    return channel
+REPEAT = object()
+INTERVAL = 0.1
 
 
 class OIP:
@@ -141,8 +138,6 @@ class OIP:
             fmt = self.numeric_fmt[channel]
             fns = self.numeric_hooks[channel]
 
-            self.send("DBG=received {} {}={}".format(fmt, channel, value))
-
             if fmt == NIB:
                 value = bool(int(value))  # type: ignore
             elif fmt == NIN:
@@ -151,11 +146,11 @@ class OIP:
                 value = float(value)  # type: ignore
 
             for fn in fns:
-                self.send("DBG=dispatch {} {}={}".format(fmt, channel, value))
                 fn(now, value)
 
         except Exception as e:
-            self.send("DBG=exception on dispatch: {}".format(repr(e)))
+            # self.send("DBG=exception on dispatch: {}".format(repr(e)))
+            pass
 
     def debounce(self, now):
         # type: (float) -> None
@@ -165,10 +160,11 @@ class OIP:
             if value != last:  # start debouncing
                 self.inputs[btn_id] = (dio, value, now)
             elif ts and now > (ts + DEBOUNCE):  # debounce limit reached, trigger action
-                self.send("DBG=button {} -> {}".format(btn_id, value))
                 self.inputs[btn_id] = (dio, value, 0)
                 for fn in self.input_hooks[btn_id]:
-                    fn(now, value)
+                    if fn(now, value) == REPEAT:
+                        self.inputs[btn_id] = (dio, value, now + INTERVAL)
+                    gc.collect()
 
     def read(self, now):
         # type: (float) -> None

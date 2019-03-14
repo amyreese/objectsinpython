@@ -30,7 +30,7 @@ def iff_active(now, value):
 
 
 @oip.press(board.BUTTON_B)
-def button_a(now, value):
+def button_b(now, value):
     if value:
         oip.execute("UNDOCK")
 
