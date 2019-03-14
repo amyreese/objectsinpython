@@ -6,4 +6,14 @@ python:
 install:
 - make setup
 script:
-- make lint oip.mpy
+- make full lint
+- make tiny
+deploy:
+  provider: releases
+  api_key:
+    secure: i/ltVA/oStjzJI2h++jlBfzcVqBF3XU0vmzET6UEzo8cIi76BMdQXsliFv0en+Numc5HZhyFNDWxgUVnG0tQGtly6Ep0tH+dAy7rmqWbWZTWR1r5t8HFLFVPFfN7a08YgNC2rroDxzBQubZKx0YOyjMNWuuY0pbTUQv+3nD362nYomgkAkEBO953ZN/cvplJTSEjElBuZ48uNduMStXqRo3jMBWvJsqRBxFJgAkDJIOf1aNpFTFaYZ0U5mkWhiEqbxy+aZrsDb5k9WEDmd7deEtmRvwVDJNRtvBuPrhhCMLEF/JDvYpVdVxYxP6XpPmIB5XmuDgh96R17esth8RHWbfSKQrP/LCvUWnZzlObnPMeFViRJCzCgKvTBQdiWt+C30Z0Nlf06dCUOzByoMzDEb42dzLEQtiCvvt4IqK4OTNzEpoqitcIEUoHCwC8P7o5sxI2fXXLda7w2QlyznxiKldS9AC2j7n+tllbB7cmkSALis734Oq4u6v6fVcjEnxtdlDPNXfEvyQMNID2rqxJKdeHdktrnETJgSqfml1WLELF514KAlkvPiiJ2gqbZJrq5HrWcE2o1UGSQJgK2olhXRikdMb2zeHYi9Yk8oeIuaevVYvi++b3ai4L+pw/EPK+HJUICvg4x/0dnSWMq7P0Up+jTc716Pep7ewG09U5OaE=
+  file: 
+    - oip.mpy
+    - oip-tiny.mpy
+  on:
+    tags: true
