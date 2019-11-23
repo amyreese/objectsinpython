@@ -16,7 +16,7 @@ setup(
     version=version,
     author="John Reese",
     author_email="john@noswap.com",
-    url="https://github.com/jreese/cpgame",
+    url="https://github.com/jreese/objectsinpython",
     classifiers=[
         "Development Status :: 4 - Beta",
         "Intended Audience :: Developers",
